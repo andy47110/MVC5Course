@@ -15,10 +15,14 @@ namespace MVC5Course.Controllers
         private FabricsEntities db = new FabricsEntities();
 
         // GET: Products
-        public ActionResult Index(bool Active = true)
+
+            //Model Binding 練習
+        public ActionResult Index(bool Active = false)
         {
+            //下where條件
             //var data = db.Product.OrderByDescending(x => x.ProductId).Take(10);
-            var data = db.Product.Where(p => p.Active.HasValue && p.Active.Value == Active).OrderByDescending(p => p.ProductId).Take(10);
+            var  data = db.Product.Where(p => p.Active.HasValue && p.Active.Value == Active);
+            data = data.OrderByDescending(p => p.ProductId).Take(10);
             return View(data);
         }
 
@@ -52,8 +56,13 @@ namespace MVC5Course.Controllers
         {
             if (ModelState.IsValid)
             {
+                //寫入DB動作並儲存
                 db.Product.Add(product);
                 db.SaveChanges();
+                //顯示錯誤訊息可使用tempData ex:SQL exception回傳
+                TempData["Msg"] = "12345";
+
+
                 return RedirectToAction("Index");
             }
 
