@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace MVC5Course.Controllers
+namespace WebApplication1.Controllers
 {
     public class HomeController : Controller
     {
@@ -26,11 +26,5 @@ namespace MVC5Course.Controllers
 
             return View();
         }
-
-        public ActionResult Test()
-        {
-            return View();
-        }
-
     }
 }
