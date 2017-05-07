@@ -7,7 +7,7 @@ using MVC5Course.Models;
 
 namespace MVC5Course.Controllers
 {
-    [Authorize] //ActionBuilder??? 下禮拜會講 20170507
+    //[Authorize] //ActionBuilder??? 下禮拜會講 20170507
     public class EFController : Controller
     {
 
@@ -21,7 +21,7 @@ namespace MVC5Course.Controllers
             //下方代表只是一個查詢物件
             var all = db.Product.AsQueryable();
             //也可轉成AsEnumerable 但會在這邊就把DB物件全部取回來
-            var allEnum = db.Product.AsEnumerable();
+            //var allEnum = db.Product.AsEnumerable();
 
             //不同的API傳入的資料，會依據API不同而產生不同的型別
             var one = db.Product.Find(1);
@@ -77,6 +77,22 @@ namespace MVC5Course.Controllers
         public ActionResult Delete(int id)
         {
             var product = db.Product.Find(id);
+
+            //edmx中的導覽屬性:取出Product關聯的所以資料
+
+            ////方法一
+            //foreach(var item in product.OrderLine.ToList())
+            //{
+            //    //使用導覽屬性將所有關聯資料刪除
+            //    db.OrderLine.Remove(item);
+            //    //*不建議在此進行saveChanges
+            //    //建議在所有動作結束後再進行saveChanges
+            //}
+
+            //方法二
+            db.OrderLine.RemoveRange(product.OrderLine);
+
+            //如資料為關聯式資料時，下行方法將無法只刪除單一table中的資料
             db.Product.Remove(product);
             db.SaveChanges();
 
