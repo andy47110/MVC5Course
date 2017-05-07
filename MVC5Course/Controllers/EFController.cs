@@ -62,7 +62,7 @@ namespace MVC5Course.Controllers
         {
             if(ModelState.IsValid)
             {
-                var item = db.Product.Find(product);
+                var item = db.Product.Find(id);
                 item.ProductId = product.ProductId;
                 item.ProductName = product.ProductName;
                 item.Stock = product.Stock;
