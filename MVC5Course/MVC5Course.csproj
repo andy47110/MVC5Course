@@ -248,6 +248,7 @@
     <Compile Include="Models\usp_Fabrics_Result.Partial.cs">
       <DependentUpon>EFGeneratePartialClass.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ValidationAttribute\商品名稱必須包含Test字串.cs" />
     <Compile Include="Models\ViewModel\ProductLiteVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -360,6 +361,8 @@
     <Content Include="Views\EF\Index.cshtml" />
     <Content Include="Views\EF\Create.cshtml" />
     <Content Include="Views\EF\Edit.cshtml" />
+    <Content Include="Views\EF\Details.cshtml" />
+    <Content Include="Views\EF\DeletedDetail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="images\" />
