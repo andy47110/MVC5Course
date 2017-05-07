@@ -159,7 +159,7 @@ namespace MVC5Course.Controllers
 
         [HttpPost]
         //public ActionResult CreateProduct(ProductLiteVM data)
-                    public ActionResult CreateProduct([Bind(Include ="ProductId,ProductName,Price,Active,Stock")] Product product)
+                    public ActionResult CreateProduct([Bind(Include ="ProductName,Price,Stock")] ProductLiteVM product)
         {
             if (ModelState.IsValid ==true)
             {
