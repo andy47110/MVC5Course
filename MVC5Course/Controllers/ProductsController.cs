@@ -18,7 +18,7 @@ namespace MVC5Course.Controllers
         // GET: Products
 
             //Model Binding 練習
-        public ActionResult Index(bool Active = false)
+        public ActionResult Index(bool Active = true)
         {
             //下where條件
             //var data = db.Product.OrderByDescending(x => x.ProductId).Take(10);
@@ -147,9 +147,27 @@ namespace MVC5Course.Controllers
                     Price = p.Price,
                     Stock = p.Stock
                 })
+                .OrderByDescending(p => p.ProductId)
                 .Take(10);
             return View(data);
         }
 
+        public ActionResult CreateProduct()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        //public ActionResult CreateProduct(ProductLiteVM data)
+                    public ActionResult CreateProduct([Bind(Include ="ProductId,ProductName,Price,Active,Stock")] Product product)
+        {
+            if (ModelState.IsValid ==true)
+            {
+                //儲存資料進資料庫
+                return RedirectToAction("ListProducts");
+            }
+            //驗證失敗,繼續顯示原本的表單
+            return View();
+        }
     }
 }
