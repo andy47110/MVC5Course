@@ -7,16 +7,40 @@ namespace MVC5Course.Models
     using ValidationAttribute;
 
     [MetadataType(typeof(ProductMetaData))]
-    public partial class Product
+    public partial class Product :IValidatableObject
     {
         public int 訂單數量 {
             get
             {
-                return this.OrderLine.Count;
+                //return this.OrderLine.Count;
+                //因為不是直接從Entity時做出來的東東，所以沒有導覽屬性可以用，須改寫如下:
+                using (var db = new FabricsEntities)
+                {
+                    return db.Product.Find(this.ProductId).OrderLine.Count;
+                }
             }
                 }
+
+        //設計一個能夠自我驗證商業邏輯的 Model
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            //此時已經ModelBinding完成，輸入驗證屬性也完成
+            if (this.Price > 100 && this.Stock < 5)
+            {
+                //var db = new FabricsEntities();
+                //有錯誤則Return ValidtaionResult
+                yield return new ValidationResult("價格與庫存數量不合理", new string[] { "Price", "Stock" });
+            }
+
+            if (this.OrderLine.Count > 5 && this.Stock == 0)
+            {
+                yield return new ValidationResult("Stock與訂單數量不匹配", new string[] { "Stock" });
+            }
+            yield break;
+            //throw new NotImplementedException();
+        }
     }
-    
+
     public partial class ProductMetaData
     {
         [Required]
@@ -28,6 +52,7 @@ namespace MVC5Course.Models
         //System.componet Model
         [DisplayName("商品名稱")]
         [商品名稱必須包含Test字串(ErrorMessage = "商品名稱必須包含Test字串")]
+        [MaxWordsAttribute(30,ErrorMessage ="超出10個字串")]
         public string ProductName { get; set; }
 
         [Required(ErrorMessage = "請輸入商品ID")]
