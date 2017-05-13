@@ -61,9 +61,9 @@ namespace MVC5Course.Controllers
             return View();
         }
 
-        public ActionResult Test()
+        public ActionResult GetFile()
         {
-            return View();
+            return File(Server.MapPath( "~/Content/Koala.jpg"), "image/png", "Koala.png");
         }
 
     }
