@@ -66,5 +66,12 @@ namespace MVC5Course.Controllers
             return File(Server.MapPath( "~/Content/Koala.jpg"), "image/png", "Koala.png");
         }
 
+        public ActionResult GetJson()
+        {
+            //關閉延遲載入
+            db.Configuration.LazyLoadingEnabled = false;
+
+            return Json(db.Product.Take(10), JsonRequestBehavior.AllowGet);
+        }
     }
 }

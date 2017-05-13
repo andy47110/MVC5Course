@@ -403,6 +403,7 @@
     <Content Include="Views\EF\Details.cshtml" />
     <Content Include="Views\EF\DeletedDetail.cshtml" />
     <Content Include="Views\Shared\SuccessRedirect.cshtml" />
+    <Content Include="Views\Shared\IsReadytoDownload.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="images\" />

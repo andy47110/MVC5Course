@@ -39,7 +39,15 @@ namespace MVC5Course.Controllers
             //將商業邏輯封裝到Repository中
             var data = repo.GetProduct列表頁所有資料(Active, showAll: false);
 
-            return View(data);
+            //return View(data);
+
+            ViewData.Model = data;
+           
+           ViewData["ppp"] = data;
+            //弱型別的寫法
+            ViewBag.qqq = data;
+           
+           return View();
         }
 
         // GET: Products/Details/5
@@ -195,7 +203,7 @@ namespace MVC5Course.Controllers
             base.Dispose(disposing);
         }
 
-        public ActionResult ListProducts()
+        public ActionResult ListProducts(string vproductName, int vstockCntStart =0, int vstockCntEnd = 9999)
         {
             //註解ED方法
             //var data = db.Product
@@ -211,9 +219,31 @@ namespace MVC5Course.Controllers
             //    .Take(10);
 
             //改使用Repository
-            IQueryable<Product> product = repo.GetProduct列表頁所有資料(true,showAll:true);
+            //IQueryable<Product> product = repo.GetProduct列表頁所有資料(true,showAll:true);
 
-            return View(product);
+
+            //簡單型別做法 Start *********************************************************
+            var data = repo.GetProduct列表頁所有資料(true);
+            if (!string.IsNullOrEmpty(vproductName))
+            {
+                data = data.Where(x => x.ProductName.Contains(vproductName));
+            }
+
+            //data = data.Where(x => x.Stock > vstockCntStart && x.Stock < vstockCntEnd);
+
+            ViewData.Model = data
+                .Select(X => new ProductLiteVM()
+                {
+                    ProductId = X.ProductId,
+                    ProductName = X.ProductName,
+                    Price = X.Price,
+                    Stock = X.Stock
+                })
+                .Where(x=> x.Stock >= vstockCntStart && x.Stock<= vstockCntEnd)
+            .OrderByDescending(x => x.ProductId);
+
+            return View();
+            //簡單型別做法 End *********************************************************
         }
 
         public ActionResult CreateProduct()
@@ -227,6 +257,7 @@ namespace MVC5Course.Controllers
         {
             if (ModelState.IsValid ==true)
             {
+                TempData["CreateProduct_Result"] = "商品新增成功";
                 //儲存資料進資料庫
                 return RedirectToAction("ListProducts");
             }

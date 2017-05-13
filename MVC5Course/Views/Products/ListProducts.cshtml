@@ -4,11 +4,29 @@
     ViewBag.Title = "ListProducts";
 }
 
-<h2>ListProducts</h2>
+@if(TempData["CreateProduct_Result"] != null)
+{
+    <h1>
+        @TempData["CreateProduct_Result"]
+    </h1>
+}
 
+<h2>ListProducts</h2>
 <p>
     @Html.ActionLink("Create New", "CreateProduct")
 </p>
+
+<form method="Get">
+    商品名稱:
+    @Html.TextBox("vproductName")
+    庫存數量:
+    @Html.TextBox("vstockCntStart")
+    ~
+    @Html.TextBox("vstockCntEnd")
+    <button>搜尋</button>
+</form>
+<br />
+<br />  
 <table class="table">
     <tr>
         <th>
