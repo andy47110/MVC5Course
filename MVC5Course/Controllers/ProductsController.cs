@@ -11,7 +11,7 @@ using MVC5Course.Models.ViewModel;
 
 namespace MVC5Course.Controllers
 {
-    public class ProductsController : Controller
+    public class ProductsController : BaseController
     {
         //註解ED方法
         //private FabricsEntities db = new FabricsEntities();
@@ -37,7 +37,7 @@ namespace MVC5Course.Controllers
 
             //方法二
             //將商業邏輯封裝到Repository中
-            var data = repo.GetProduct列表頁所有資料(Active, showAll: true);
+            var data = repo.GetProduct列表頁所有資料(Active, showAll: false);
 
             return View(data);
         }
@@ -167,7 +167,18 @@ namespace MVC5Course.Controllers
 
             //改使用Repository
             Product product = repo.Get單筆資料ByPrdouctId(id);
+            //強迫關閉驗證 ValidateOnSaveEnabled = false
+            repo.UnitOfWork.Context.Configuration.ValidateOnSaveEnabled = false;
             repo.Delete(product);
+
+            //多個Repository 分別為實作兩個不同的Entity
+            //故repoOrderLines需要加入到repo的UnitOfWork
+            var repoOrderLines = RepositoryHelper.GetOrderLineRepository(repo.UnitOfWork);
+            foreach(var item in product.OrderLine)
+            {
+                repoOrderLines.Delete(item);
+            }
+            //repoOrderLines.UnitOfWork.Commit();  已加入repo，故不需要用
             repo.UnitOfWork.Commit();
 
             

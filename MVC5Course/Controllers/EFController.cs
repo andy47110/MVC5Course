@@ -9,10 +9,9 @@ using System.Data.Entity.Validation;
 namespace MVC5Course.Controllers
 {
     //[Authorize] //ActionBuilder??? 下禮拜會講 20170507
-    public class EFController : Controller
+    public class EFController : BaseController
     {
 
-        FabricsEntities db = new FabricsEntities();
         // GET: EF
         public ActionResult Index()
         {
@@ -133,7 +132,9 @@ namespace MVC5Course.Controllers
             //var allEnum = db.Product.AsEnumerable();
 
             //不同的API傳入的資料，會依據API不同而產生不同的型別
-            var data = all.Where(x => x.Is刪除 == true && x.ProductName.Contains("Black"))
+            var data = all.Where(x => x.Is刪除 == true
+            //&& x.ProductName.Contains("Black")
+            )
                 .OrderByDescending(x => x.ProductId);
 
             return View(data);

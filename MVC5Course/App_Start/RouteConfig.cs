@@ -13,8 +13,10 @@ namespace MVC5Course
         {
             //甚麼情況下不要走路由
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+            //路由判斷不符合路徑才會交給IIS Express伺服器
 
             //路由是可自由修改、被設計的
+            //比對路由
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}/{data}",

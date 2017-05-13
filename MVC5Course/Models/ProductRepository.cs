@@ -11,18 +11,29 @@ namespace MVC5Course.Models
         {
             return base.All().Where(x => !x.Is刪除);
         }
-
+        public override void Delete(Product product)
+        {
+            product.Is刪除 = true;
+        }
         public Product Get單筆資料ByPrdouctId(int id)
         {
             return this.All().FirstOrDefault(p => p.ProductId == id);
         }
-        public IQueryable<Product> GetProduct列表頁所有資料(bool Active, bool showAll =false)
+        public IQueryable<Product> GetProduct列表頁所有資料(bool Active, bool showAll =false,int showCnt =0)
         {
 
             IQueryable<Product> all = this.All();
             if (showAll)
             {
                 all = base.All();
+            }
+            else if (showCnt != 0)
+            {
+                all = all
+                    .Where(x =>
+                            x.Active.HasValue
+                            && x.Active.Value == Active)
+                    .OrderByDescending(x => x.ProductId).Take(showCnt);
             }
             else
             {

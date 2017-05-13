@@ -42,5 +42,5 @@ namespace MVC5Course.Models
 			ObjectSet.Remove(entity);
 		}
 
-	}
+    }
 }
