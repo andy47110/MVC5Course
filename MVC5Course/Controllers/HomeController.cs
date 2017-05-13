@@ -10,6 +10,13 @@ namespace MVC5Course.Controllers
     {
         public ActionResult Index()
         {
+            //return View("About");
+            //return View("Index","_Layout");
+            return View();
+        }
+
+        public ActionResult Unknow()
+        {
             return View();
         }
 
@@ -18,6 +25,33 @@ namespace MVC5Course.Controllers
             ViewBag.Message = "Your application description page.";
 
             return View();
+        }
+
+
+        /// <summary>
+        /// 需要沒有Layout的View
+        /// 可以寫PartialView即可(AJAX常用)
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult PartialAbout()
+        {
+            ViewBag.title = "PartialAbout";
+            ViewBag.Message = "Your application description page.";
+
+            if (Request.IsAjaxRequest())
+            {
+                //如果是AJAX來的就用PartialView
+                return PartialView("About");
+            }
+            else
+            {
+                return View("About");
+            }
+        }
+
+        public ActionResult SuccessRedirect()
+        {
+            return PartialView("SuccessRedirect", "/");
         }
 
         public ActionResult Contact()

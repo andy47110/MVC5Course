@@ -11,7 +11,7 @@ using MVC5Course.Models.ViewModel;
 
 namespace MVC5Course.Controllers
 {
-    public abstract class BaseController:Controller
+    public abstract class BaseController : Controller
     {
         protected FabricsEntities db = new FabricsEntities();
 
@@ -26,5 +26,15 @@ namespace MVC5Course.Controllers
         {
             return Content("Hello World");
         }
+
+        /// <summary>
+        /// 對應不存在的Action 導回首頁
+        /// 一般還是建議 找不到就顯示404
+        /// </summary>
+        /// <param name="actionName"></param>
+        //protected override void HandleUnknownAction(string actionName)
+        //{
+        //    this.RedirectToAction("Index","Home").ExecuteResult(this.ControllerContext);
+        //}
     }
 }
