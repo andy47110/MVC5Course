@@ -14,7 +14,7 @@ namespace MVC5Course.Models
             {
                 //return this.OrderLine.Count;
                 //因為不是直接從Entity時做出來的東東，所以沒有導覽屬性可以用，須改寫如下:
-                using (var db = new FabricsEntities)
+                using (var db = new FabricsEntities())
                 {
                     return db.Product.Find(this.ProductId).OrderLine.Count;
                 }
