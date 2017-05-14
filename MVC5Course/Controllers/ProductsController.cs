@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using MVC5Course.Models;
 using MVC5Course.Models.ViewModel;
+using System.Data.Entity.Infrastructure;
 
 namespace MVC5Course.Controllers
 {
@@ -22,7 +23,8 @@ namespace MVC5Course.Controllers
 
         ProductRepository repo = RepositoryHelper.GetProductRepository();
         // GET: Products
-
+        
+            [OutputCache(Duration = 300,Location =System.Web.UI.OutputCacheLocation.ServerAndClient)]
         //Model Binding 練習
         public ActionResult Index(bool Active = true)
         {
@@ -85,7 +87,8 @@ namespace MVC5Course.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "ProductId,ProductName,Price,Active,Stock")] Product product)
         {
-            if (ModelState.IsValid)
+            // 故意註解 產生sql Exception 測試Error ActionFilter
+            //if (ModelState.IsValid)
             {
                 //註解ED方法
                 ////寫入DB動作並儲存
@@ -97,8 +100,7 @@ namespace MVC5Course.Controllers
                 //使用Repositroy
                 repo.Add(product);
                 repo.UnitOfWork.Commit();
-
-
+                
                 return RedirectToAction("Index");
             }
 
@@ -126,20 +128,33 @@ namespace MVC5Course.Controllers
         // 詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ProductId,ProductName,Price,Active,Stock")] Product product)
+        public ActionResult Edit(int id, FormCollection form)
+        //[Bind(Include =  "ProductId,ProductName,Price,Active,Stock")] Product product
         {
-            if (ModelState.IsValid)
+            //改用模型繫結延遲驗證，到 Action 裡才執行模型繫結與模型驗證工作 Start
+            var product = repo.Get單筆資料ByPrdouctId(id);
+
+            if (TryUpdateModel(product,
+                new string[] { "ProductId","ProductName","Price","Active","Stock"}))
             {
-                //註解ED方法
-                //db.Entry(product).State = EntityState.Modified;
-                //db.SaveChanges();
-
-                //改使用Repository
-                repo.Update(product);
+                //在這邊就已經被Update了，因此直接Commit
                 repo.UnitOfWork.Commit();
-
                 return RedirectToAction("Index");
             }
+            //改用模型繫結延遲驗證，到 Action 裡才執行模型繫結與模型驗證工作 End
+
+            //if (ModelState.IsValid)
+            //{
+            //    //註解ED方法
+            //    //db.Entry(product).State = EntityState.Modified;
+            //    //db.SaveChanges();
+
+            //    //改使用Repository
+            //    repo.Update(product);
+            //    repo.UnitOfWork.Commit();
+
+            //    return RedirectToAction("Index");
+            //}
             return View(product);
         }
 
@@ -203,7 +218,7 @@ namespace MVC5Course.Controllers
             base.Dispose(disposing);
         }
 
-        public ActionResult ListProducts(string vproductName, int vstockCntStart =0, int vstockCntEnd = 9999)
+        public ActionResult ListProducts(ProductSearchVM searchCondition)
         {
             //註解ED方法
             //var data = db.Product
@@ -221,29 +236,71 @@ namespace MVC5Course.Controllers
             //改使用Repository
             //IQueryable<Product> product = repo.GetProduct列表頁所有資料(true,showAll:true);
 
-
-            //簡單型別做法 Start *********************************************************
-            var data = repo.GetProduct列表頁所有資料(true);
-            if (!string.IsNullOrEmpty(vproductName))
+            if (searchCondition == null)
             {
-                data = data.Where(x => x.ProductName.Contains(vproductName));
+                ViewBag.searchCondition = new ProductSearchVM()
+                {
+                    vstockCntStart = 0,
+                    vstockCntEnd = 9999
+                };
             }
 
-            //data = data.Where(x => x.Stock > vstockCntStart && x.Stock < vstockCntEnd);
-
-            ViewData.Model = data
-                .Select(X => new ProductLiteVM()
-                {
-                    ProductId = X.ProductId,
-                    ProductName = X.ProductName,
-                    Price = X.Price,
-                    Stock = X.Stock
-                })
-                .Where(x=> x.Stock >= vstockCntStart && x.Stock<= vstockCntEnd)
-            .OrderByDescending(x => x.ProductId);
+            //強型別做法 Start *********************************************************
+            GetProductListBySearch(searchCondition);
+            //強型別做法 End *********************************************************
 
             return View();
-            //簡單型別做法 End *********************************************************
+        }
+
+        [HttpPost]
+        public ActionResult ListProducts(ProductSearchVM searchCondition, ProductBatchUpdate[] items)
+        {
+            //示範加上 prefix 的 TryUpdateModel 用法
+            // TryUpdateModel(searchCondition, "searchCondition")
+            if (ModelState.IsValid)
+            {
+                foreach(var item in items)
+                {
+                    var prod = db.Product.Find(item.ProductId);
+                    prod.Price = item.Price;
+                    prod.Stock = item.Stock;
+                }
+
+                db.Configuration.ValidateOnSaveEnabled = false;
+                db.SaveChanges();
+
+                return RedirectToAction("ListProducts", searchCondition);
+            }
+
+            GetProductListBySearch(searchCondition);
+
+            return View();
+        }
+        private void GetProductListBySearch(ProductSearchVM searchCondition)
+        {
+            var data = repo.GetProduct列表頁所有資料(true);
+
+            if (ModelState.IsValid)
+            {
+                if (!string.IsNullOrEmpty(searchCondition.vproductName))
+                {
+                    data = data.Where(x => x.ProductName.Contains(searchCondition.vproductName));
+                }
+
+                data = data.Where(x => x.Stock > searchCondition.vstockCntStart && x.Stock < searchCondition.vstockCntEnd);
+
+                ViewData.Model = data
+                    .Select(X => new ProductLiteVM()
+                    {
+                        ProductId = X.ProductId,
+                        ProductName = X.ProductName,
+                        Price = X.Price,
+                        Stock = X.Stock
+                    })
+                .OrderByDescending(x => x.ProductId);
+            }
+
+            ViewBag.searchCondition = searchCondition;
         }
 
         public ActionResult CreateProduct()
@@ -253,7 +310,8 @@ namespace MVC5Course.Controllers
 
         [HttpPost]
         //public ActionResult CreateProduct(ProductLiteVM data)
-                    public ActionResult CreateProduct([Bind(Include ="ProductName,Price,Stock")] ProductLiteVM product)
+        [HandleError(ExceptionType = typeof(DbUpdateException), View = "Error_DbUpdateException")]
+        public ActionResult CreateProduct([Bind(Include ="ProductName,Price,Stock")] ProductLiteVM product)
         {
             if (ModelState.IsValid ==true)
             {

@@ -4,6 +4,7 @@ namespace MVC5Course.Models
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
+    using System.Linq;
     using ValidationAttribute;
 
     [MetadataType(typeof(ProductMetaData))]
@@ -32,10 +33,16 @@ namespace MVC5Course.Models
                 yield return new ValidationResult("價格與庫存數量不合理", new string[] { "Price", "Stock" });
             }
 
-            if (this.OrderLine.Count > 5 && this.Stock == 0)
+            using (var db = new FabricsEntities())
             {
-                yield return new ValidationResult("Stock與訂單數量不匹配", new string[] { "Stock" });
+                var prod = db.Product.FirstOrDefault(p => p.ProductId == this.ProductId);
+                if (prod != null && prod.OrderLine.Count() > 5 && this.Stock == 0)
+                {
+                        yield return new ValidationResult("Stock 與訂單數量不匹配",
+                                new string[] { "Stock" });
+                }
             }
+
             yield break;
             //throw new NotImplementedException();
         }

@@ -13,6 +13,7 @@ namespace MVC5Course.Models
         }
         public override void Delete(Product product)
         {
+            this.UnitOfWork.Context.Configuration.ValidateOnSaveEnabled = false;
             product.Is刪除 = true;
         }
         public Product Get單筆資料ByPrdouctId(int id)

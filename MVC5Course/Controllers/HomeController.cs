@@ -20,14 +20,22 @@ namespace MVC5Course.Controllers
             return View();
         }
 
-        public ActionResult About()
+        [LocalOnly]
+        public ActionResult Debug()
         {
-            ViewBag.Message = "Your application description page.";
-
             return View();
         }
 
+        [SharedViewBag]
+        public ActionResult About()
+        {
+            //ViewBag.Message = "Your application description page.";
+            throw new ArgumentException("Error Handled!!");
+            //return View();
+        }
 
+        [LocalOnly]
+        [SharedViewBag(MyProperty = "")]
         /// <summary>
         /// 需要沒有Layout的View
         /// 可以寫PartialView即可(AJAX常用)
@@ -36,7 +44,7 @@ namespace MVC5Course.Controllers
         public ActionResult PartialAbout()
         {
             ViewBag.title = "PartialAbout";
-            ViewBag.Message = "Your application description page.";
+            //ViewBag.Message = "Your application description page.";
 
             if (Request.IsAjaxRequest())
             {
@@ -72,6 +80,24 @@ namespace MVC5Course.Controllers
             db.Configuration.LazyLoadingEnabled = false;
 
             return Json(db.Product.Take(10), JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult VT()
+        {
+            ViewBag.IsEnabled = true;
+            return View();
+        }
+
+        public ActionResult RazorTest()
+        {
+            int[] data = new int[] { 1, 2, 3, 4, 5 };
+
+            return PartialView(data);
+        }
+
+        public ActionResult Test()
+        {
+            return View();
         }
     }
 }
