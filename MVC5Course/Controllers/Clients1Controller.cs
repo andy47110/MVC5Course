@@ -43,7 +43,7 @@ namespace MVC5Course.Controllers
                 client = client.Where(p => p.CreditRating ==CreaditRatingFilter);
             }
 
-            if (LastName != "")
+            if (!String.IsNullOrEmpty(LastName))
             {
                 client = client.Where(p => p.LastName == LastName);
             }

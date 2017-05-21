@@ -451,6 +451,11 @@
     <Content Include="Views\Form\Edit.cshtml" />
     <Content Include="Views\Form\Index.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\Client.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Client.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Datetime.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Datetime.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\CreditRating.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Gender.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="css\" />
@@ -458,7 +463,6 @@
     <Folder Include="images\" />
     <Folder Include="img\" />
     <Folder Include="js\" />
-    <Folder Include="Views\Shared\EditorTemplates\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
