@@ -1,6 +1,13 @@
-﻿@section breadcrumb{
+﻿
+@section breadcrumb{
     <li><a href="@Url.Action("Index", "Metro")">DashBoard</a></li>
 }
+
+@if (IsAjax)
+{
+    Layout = "";
+}
+
                 <div class="row-fluid">
 
                     <div class="span3 statbox purple" onTablet="span6" onDesktop="span3">

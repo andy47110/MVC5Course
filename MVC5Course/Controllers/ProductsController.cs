@@ -88,7 +88,7 @@ namespace MVC5Course.Controllers
         public ActionResult Create([Bind(Include = "ProductId,ProductName,Price,Active,Stock")] Product product)
         {
             // 故意註解 產生sql Exception 測試Error ActionFilter
-            //if (ModelState.IsValid)
+           if (ModelState.IsValid)
             {
                 //註解ED方法
                 ////寫入DB動作並儲存
