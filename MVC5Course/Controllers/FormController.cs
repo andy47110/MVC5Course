@@ -13,6 +13,7 @@ namespace MVC5Course.Controllers
         // GET: Form
         public ActionResult Index()
         {
+            ViewData.Model = db.Product.Take(10);
             return View();
         }
 

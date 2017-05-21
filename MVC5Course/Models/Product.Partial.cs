@@ -72,8 +72,12 @@ namespace MVC5Course.Models
         //System.componet Model
         [DisplayName("是否有庫存")]
         public Nullable<decimal> Stock { get; set; }
+
+        //Show出日期選單只有Chrome瀏覽器才有
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        //DataType會決定畫面上怎麼顯示(加上DataType.Date一定要有DisplayFormat，並且在chrome上面格式一定要yyyy-MM-dd)
+        //[DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        //[DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}", ApplyFormatInEditMode = true)]
         public object CreatedOn { get; set; }
         public virtual ICollection<OrderLine> OrderLine { get; set; }
     }
